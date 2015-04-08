@@ -270,7 +270,7 @@ class Server
     /**
      * Generate and return response object of manipulated image.
      * @param  mixed
-     * @return StreamedResponse The response object.
+     * @return string
      */
     public function getImageResponse()
     {
@@ -279,6 +279,20 @@ class Server
         $this->makeImage($request);
 
         return ResponseFactory::create($this->cache, $request, $this->getCachePath($request));
+    }
+
+    /**
+     * Generate and return response object of manipulated image.
+     * @param  mixed
+     * @return StreamedResponse The response object.
+     */
+    public function getImageStreamedResponse()
+    {
+        $request = $this->resolveRequestObject(func_get_args());
+
+        $this->makeImage($request);
+
+        return ResponseFactory::createResponse($this->cache, $request, $this->getCachePath($request));
     }
 
     /**

@@ -53,6 +53,11 @@ class ResponseFactory
         return $response;
     }
 
+    public function getContent()
+    {
+        return $this->setContent();
+    }
+
     /**
      * Set the streamed response headers.
      * @param  StreamedResponse $response The response object.
@@ -77,8 +82,12 @@ class ResponseFactory
      * @param  StreamedResponse $response The response object.
      * @return StreamedResponse
      */
-    public function setContent(StreamedResponse $response)
+    public function setContent(StreamedResponse $response = null)
     {
+        if ($response === null) {
+            return $this->cache->read($this->path);
+        }
+
         $stream = $this->cache->readStream($this->path);
 
         $response->setCallback(function () use ($stream) {
@@ -98,6 +107,18 @@ class ResponseFactory
      * @return StreamedResponse    The response object.
      */
     public static function create(FilesystemInterface $cache, Request $request, $path)
+    {
+        return (new self($cache, $request, $path))->getContent();
+    }
+
+    /**
+     * Create response instance.
+     * @param  FilesystemInterface $cache   The cache file system.
+     * @param  Request             $request The request object.
+     * @param  string              $path    The file path.
+     * @return StreamedResponse    The response object.
+     */
+    public static function createResponse(FilesystemInterface $cache, Request $request, $path)
     {
         return (new self($cache, $request, $path))->getResponse();
     }
